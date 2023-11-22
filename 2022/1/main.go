@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -12,11 +13,12 @@ var filename = "input.txt"
 
 func main() {
 	data := readInput()
-	maxElfCaloriesIndex, maxElfCalories := processData(data)
+	maxElfCaloriesIndex, maxElfCalories, topThreeSum := processData(data)
 	log.Printf(`Index %v: %v Calories`, maxElfCaloriesIndex, maxElfCalories)
+	log.Printf(`Top 3 Elves: %v`, topThreeSum)
 }
 
-func processData(data []string) (int, int) {
+func processData(data []string) (int, int, int) {
 	var elfCalories []int
 
 	currentElfCalories := 0
@@ -40,7 +42,11 @@ func processData(data []string) (int, int) {
 		}
 	}
 
-	return maxElfCaloriesIndex, maxElfCalories
+	sort.Ints(elfCalories)
+
+	topThreeSum := elfCalories[len(elfCalories)-1] + elfCalories[len(elfCalories)-2] + elfCalories[len(elfCalories)-3]
+
+	return maxElfCaloriesIndex, maxElfCalories, topThreeSum
 }
 
 func readInput() []string {
