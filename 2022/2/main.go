@@ -2,30 +2,50 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
-var filename = "input.txt"
+var outcomeMap = map[string]int{
+	"win":  6,
+	"draw": 3,
+	"loss": 0,
+}
+var choiceMap = map[string]int{
+	"r": 1,
+	"p": 2,
+	"s": 3,
+}
 
-var shortcutMap = map[string]int{
-	"A X": 4, // rock-rock draw
-	"A Y": 8, // rock-paper win 8
-	"A Z": 3, // rock-scissors loss
-	"B X": 1, // paper-rock loss 1
-	"B Y": 5, // paper-paper draw
-	"B Z": 9, // paper-scissors win
-	"C X": 7, // scissors-rock win
-	"C Y": 2, // scissors-paper loss
-	"C Z": 6, // scissors-scissors draw
+var victoryMap = map[string]string{
+	"r": "s",
+	"p": "r",
+	"s": "p",
+}
+
+var symbolTranslation = map[string]string{
+	"A": "r",
+	"B": "p",
+	"C": "s",
+}
+
+var resultTranslation = map[string]string{
+	"X": "loss",
+	"Y": "draw",
+	"Z": "win",
 }
 
 func main() {
-	data := readInput()
-	total := processData(data)
+
+	total := solveChallenge("input.txt")
 
 	log.Printf(`Total Score: %v`, total)
+}
+
+func solveChallenge(filename string) int {
+	data := readInput(filename)
+	return processData(data)
 }
 
 func processData(data []string) int {
@@ -33,13 +53,54 @@ func processData(data []string) int {
 	var totalScore = 0
 
 	for _, value := range data {
-		totalScore = totalScore + shortcutMap[value]
+		totalScore = totalScore + processRound(value)
 	}
 
 	return totalScore
 }
 
-func readInput() []string {
+func processRound(round string) int {
+	roundSlice := strings.Split(round, " ")
+	rawTheirs := roundSlice[0]
+	rawResult := roundSlice[1]
+	theirs := translateSymbol(rawTheirs)
+	outcome := translateResult(rawResult)
+
+	var ours string
+
+	if outcome == "draw" {
+		ours = theirs
+	} else if outcome == "win" {
+		// reverse lookup in victoryMap
+		ours = victoryReverseLookup(theirs)
+	} else {
+		ours = victoryMap[theirs]
+	}
+
+	score := outcomeMap[outcome] + choiceMap[ours]
+
+	return score
+}
+
+func victoryReverseLookup(loser string) string {
+	var symbol string
+	for key, value := range victoryMap {
+		if value == loser {
+			symbol = key
+		}
+	}
+	return symbol
+}
+
+func translateSymbol(symbol string) string {
+	return symbolTranslation[symbol]
+}
+
+func translateResult(result string) string {
+	return resultTranslation[result]
+}
+
+func readInput(filename string) []string {
 	f, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -53,8 +114,6 @@ func readInput() []string {
 
 	for scanner.Scan() {
 		dataSlice = append(dataSlice, scanner.Text())
-		// do something with a line
-		fmt.Printf("line: %s\n", scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
