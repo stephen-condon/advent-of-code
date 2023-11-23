@@ -2,12 +2,9 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 )
-
-var filename = "input.txt"
 
 var shortcutMap = map[string]int{
 	"A X": 4, // rock-rock draw
@@ -22,10 +19,15 @@ var shortcutMap = map[string]int{
 }
 
 func main() {
-	data := readInput()
-	total := processData(data)
+
+	total := solveChallenge("input.txt")
 
 	log.Printf(`Total Score: %v`, total)
+}
+
+func solveChallenge(filename string) int {
+	data := readInput(filename)
+	return processData(data)
 }
 
 func processData(data []string) int {
@@ -39,7 +41,7 @@ func processData(data []string) int {
 	return totalScore
 }
 
-func readInput() []string {
+func readInput(filename string) []string {
 	f, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -53,8 +55,6 @@ func readInput() []string {
 
 	for scanner.Scan() {
 		dataSlice = append(dataSlice, scanner.Text())
-		// do something with a line
-		fmt.Printf("line: %s\n", scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
