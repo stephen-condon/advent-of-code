@@ -9,8 +9,8 @@ func TestPartOne_Sample(t *testing.T) {
 	}
 
 	tests := []test{
-		{filename: "sample.txt", want: 157},
-		{filename: "input.txt", want: 7821},
+		{filename: "sample.txt", want: 70},
+		{filename: "input.txt", want: 2752},
 	}
 
 	for _, tc := range tests {
