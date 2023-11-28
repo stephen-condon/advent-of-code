@@ -20,8 +20,17 @@ func solveChallenge(filename string) int {
 	sumPriorities := 0
 	initializePriorities()
 	data := readInput(filename)
+	var elfGroup []string
 	for _, el := range data {
-		sumPriorities = sumPriorities + processLine(el)
+		elfGroup = append(elfGroup, el)
+		if len(elfGroup) == 3 {
+			badgePriority := processGroup(elfGroup)
+			log.Printf(`Badge Priority: %v`, badgePriority)
+			sumPriorities = sumPriorities + badgePriority
+			//reset elfGroup
+			elfGroup = nil
+		}
+
 	}
 
 	return sumPriorities
@@ -34,31 +43,41 @@ func initializePriorities() {
 	}
 }
 
-func processLine(rucksack string) int {
-	lineScore := 0
-	var compartmentOne = map[string]int{} // not slice, let's do val:index map
-	compartmentSize := len(rucksack) / 2
-	rucksackItems := strings.Split(rucksack, "")
-	isFound := false
-	for index, el := range rucksackItems {
-		if !isFound {
-			if index < compartmentSize {
-				compartmentOne[el] = index
-			} else {
-				// we already have full scope of compartment 1 if we're on the back half of the iteration
-				_, found := compartmentOne[el]
-				if found {
-					isFound = true
-					priority := priorityMap[el]
-					lineScore = lineScore + priority
-				}
-			}
-		} else {
+func processGroup(elfGroup []string) int {
+	counts := map[string]int{}
+	badgePriority := -1
+	for _, el := range elfGroup {
+		newCounts, badge := processElf(el, counts)
+		counts = newCounts
+		log.Printf(`Result: %v`, counts)
+		log.Printf(`Badge: %v`, badge)
+		log.Printf(`Priority: %v`, priorityMap[badge])
+		if badge != "" {
+			badgePriority = priorityMap[badge]
 			break
 		}
 	}
 
-	return lineScore
+	return badgePriority
+}
+
+func processElf(rucksack string, counts map[string]int) (map[string]int, string) {
+	itemsProcessed := map[string]int{}
+	badge := ""
+	rucksackItems := strings.Split(rucksack, "")
+	for _, el := range rucksackItems {
+		_, success := itemsProcessed[el]
+		if !success {
+			itemsProcessed[el] = 1
+			counts[el] = counts[el] + 1
+			if counts[el] == 3 {
+				badge = el
+				break
+			}
+		}
+	}
+
+	return counts, badge
 }
 
 func readInput(filename string) []string {
