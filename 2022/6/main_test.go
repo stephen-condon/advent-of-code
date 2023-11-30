@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func Test_Sample(t *testing.T) {
+func Test_PartOne_Sample(t *testing.T) {
 	type test struct {
 		filename string
 		want     int
@@ -18,7 +18,7 @@ func Test_Sample(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		got := solveChallenge(tc.filename)
+		got := solvePartOne(tc.filename)
 		if got != tc.want {
 			t.Fatalf("expected: %v, got: %v", tc.want, got)
 		}

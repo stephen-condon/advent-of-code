@@ -9,12 +9,20 @@ import (
 )
 
 func main() {
-	result := solveChallenge("input.txt")
+	result := solvePartOne("input.txt")
 
 	log.Printf(`Result: %v`, result)
 }
 
-func solveChallenge(filename string) int {
+func solvePartTwo(filename string) int {
+	data := readInput(filename)
+	buffer := strings.Split(data[0], "")
+	index := processBuffer(buffer)
+
+	return index
+}
+
+func solvePartOne(filename string) int {
 	data := readInput(filename)
 	buffer := strings.Split(data[0], "")
 	index := processBuffer(buffer)
