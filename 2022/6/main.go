@@ -8,13 +8,16 @@ import (
 	"strings"
 )
 
+var checkSize int
+
 func main() {
-	result := solvePartOne("input.txt")
+	result := solvePartTwo("input.txt")
 
 	log.Printf(`Result: %v`, result)
 }
 
 func solvePartTwo(filename string) int {
+	checkSize = 14
 	data := readInput(filename)
 	buffer := strings.Split(data[0], "")
 	index := processBuffer(buffer)
@@ -23,21 +26,21 @@ func solvePartTwo(filename string) int {
 }
 
 func solvePartOne(filename string) int {
+	checkSize = 4
 	data := readInput(filename)
 	buffer := strings.Split(data[0], "")
 	index := processBuffer(buffer)
 
 	return index
 }
-
 func processBuffer(buffer []string) int {
 	// separate statements to ensure proper type for workingBuffer
 	var workingBuffer BufferTest
-	workingBuffer = buffer[:4]
+	workingBuffer = buffer[:checkSize]
 
 	processedCharacters := -1
 	// start iteration after preloading first 4 characters
-	for i := 4; i < len(buffer); i = i + 1 {
+	for i := checkSize; i < len(buffer); i = i + 1 {
 		workingBuffer.rotate(buffer[i])
 		if workingBuffer.test() {
 			processedCharacters = i + 1
@@ -77,10 +80,10 @@ type BufferTest []string
 func (b BufferTest) rotate(newData string) {
 	oldBuffer := b
 	for index := range oldBuffer {
-		if index < 3 {
+		if index < (checkSize - 1) {
 			b[index] = b[index+1]
 		} else {
-			// index == 3
+			// index == (checkSize - 1)
 			b[index] = newData
 		}
 	}

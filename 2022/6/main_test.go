@@ -24,3 +24,26 @@ func Test_PartOne_Sample(t *testing.T) {
 		}
 	}
 }
+
+func Test_PartTwo_Sample(t *testing.T) {
+	type test struct {
+		filename string
+		want     int
+	}
+
+	tests := []test{
+		{filename: "sample5.txt", want: 23},
+		{filename: "sample6.txt", want: 23},
+		{filename: "sample7.txt", want: 19},
+		{filename: "sample10.txt", want: 29},
+		{filename: "sample11.txt", want: 26},
+		{filename: "input.txt", want: 2265},
+	}
+
+	for _, tc := range tests {
+		got := solvePartTwo(tc.filename)
+		if got != tc.want {
+			t.Fatalf("expected: %v, got: %v", tc.want, got)
+		}
+	}
+}
