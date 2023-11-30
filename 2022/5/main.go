@@ -136,18 +136,12 @@ func (l Layout) push(key string, value string) {
 	l[key] = append(l[key], value)
 }
 
-func (l Layout) pop(key string) string {
-	lastIndex := len(l[key]) - 1
-	value := l[key][lastIndex]
-	l[key] = l[key][:lastIndex]
-	return value
-}
-
 func (l Layout) transfer(instruction InstructionSet) {
-	for i := 0; i < instruction.amount; i = i + 1 {
-		val := l.pop(instruction.source)
-		l.push(instruction.destination, val)
-	}
+	beginSourceSlice := len(l[instruction.source]) - instruction.amount
+	sourceSlice := l[instruction.source][beginSourceSlice:]
+	newSourceSlice := l[instruction.source][:beginSourceSlice]
+	l[instruction.source] = newSourceSlice
+	l[instruction.destination] = append(l[instruction.destination], sourceSlice...)
 }
 
 func (l Layout) getMessage() string {
