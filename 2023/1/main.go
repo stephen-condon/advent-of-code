@@ -6,7 +6,6 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -22,11 +21,10 @@ func solvePartOne(filename string) int {
 	r, _ := regexp.Compile(`\d`)
 
 	for _, line := range data {
-		splitLine := strings.Split(line, "")
 		matches := r.FindAllStringIndex(line, -1)
 
-		firstDigit, _ := strconv.Atoi(splitLine[matches[0][0]])
-		secondDigit, _ := strconv.Atoi(splitLine[matches[len(matches)-1][0]])
+		firstDigit, _ := strconv.Atoi(line[matches[0][0]:matches[0][1]])
+		secondDigit, _ := strconv.Atoi(line[matches[len(matches)-1][0]:matches[len(matches)-1][1]])
 
 		calibrationValue := (firstDigit * 10) + secondDigit
 
