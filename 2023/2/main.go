@@ -12,7 +12,7 @@ var gameMaximums GameValues
 var gamePossible bool
 
 func main() {
-	result := solvePartOne("input.txt")
+	result := solvePartTwo("input.txt")
 
 	log.Printf(`Result: %v`, result)
 }
@@ -27,6 +27,37 @@ func solvePartOne(filename string) int {
 	}
 
 	return total
+}
+
+func solvePartTwo(filename string) int {
+	sum := 0
+	data := readInput(filename)
+
+	for _, game := range data {
+		gameMinimums := GameValues{
+			"red":   0,
+			"green": 0,
+			"blue":  0,
+		}
+		initialBreakdown := strings.Split(game, ": ")
+
+		samples := strings.Split(initialBreakdown[1], "; ")
+
+		for _, sample := range samples {
+			colorData := strings.Split(sample, ", ")
+			for _, value := range colorData {
+				splitValue := strings.Split(value, " ")
+				prevIndexValue, _ := strconv.Atoi(splitValue[0])
+				if gameMinimums[splitValue[1]] < prevIndexValue {
+					gameMinimums[splitValue[1]] = prevIndexValue
+				}
+			}
+		}
+
+		sum = sum + (gameMinimums["blue"] * gameMinimums["red"] * gameMinimums["green"])
+	}
+
+	return sum
 }
 
 func processGame(game string) int {
