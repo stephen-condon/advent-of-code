@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	result := solvePartOne("input.txt")
+	result := solvePartTwo("input.txt")
 
 	log.Printf(`Result: %v`, result)
 }
@@ -34,6 +34,88 @@ func solvePartOne(filename string) int {
 	}
 
 	return sum
+}
+
+func solvePartTwo(filename string) int {
+	data := readInput(filename)
+	sumGearRatios := 0
+	linesNumberRegexMatches := loadNumberMatches(data)
+
+	for lineIndex, line := range data {
+		matches := gearMatches(line)
+		for _, match := range matches {
+			gearIndex := match[0]
+			topMatches := [][]int{}
+			bottomMatches := [][]int{}
+			topData := ""
+			bottomData := ""
+			if lineIndex != 0 {
+				topMatches = linesNumberRegexMatches[lineIndex-1]
+				topData = data[lineIndex-1]
+			}
+			if lineIndex != len(data)-1 {
+				bottomMatches = linesNumberRegexMatches[lineIndex+1]
+				bottomData = data[lineIndex+1]
+			}
+			surroundingMatches := [][][]int{
+				topMatches,
+				linesNumberRegexMatches[lineIndex],
+				bottomMatches,
+			}
+			surroundingData := []string{
+				topData,
+				data[lineIndex],
+				bottomData,
+			}
+			surroundingNumbers := calculateSurroundingNumbers(gearIndex, surroundingMatches, surroundingData)
+			if len(surroundingNumbers) == 2 {
+				// make gear ratio
+				sumGearRatios = sumGearRatios + (surroundingNumbers[0] * surroundingNumbers[1])
+			}
+		}
+	}
+
+	return sumGearRatios
+
+}
+
+func calculateSurroundingNumbers(gearIndex int, surroundingMatches [][][]int, surroundingData []string) []int {
+	var surroundingNumbers []int
+	for index, line := range surroundingData {
+		for _, match := range surroundingMatches[index] {
+			// for each line, if 1st match index
+			if match[0] >= (gearIndex-1) && match[0] <= (gearIndex+1) {
+				// matched
+				number, _ := strconv.Atoi(line[match[0]:match[1]])
+				surroundingNumbers = append(surroundingNumbers, number)
+			} else if (match[1]-1) >= (gearIndex-1) && (match[1]-1) <= (gearIndex+1) {
+				// matched
+				number, _ := strconv.Atoi(line[match[0]:match[1]])
+				surroundingNumbers = append(surroundingNumbers, number)
+			}
+		}
+	}
+
+	return surroundingNumbers
+}
+
+func loadNumberMatches(data []string) [][][]int {
+	var linesNumberRegexMatches [][][]int
+
+	for _, line := range data {
+		numberRegex := `\d{1,}`
+		numberR, _ := regexp.Compile(numberRegex)
+		matches := numberR.FindAllStringIndex(line, -1)
+		linesNumberRegexMatches = append(linesNumberRegexMatches, matches)
+	}
+	return linesNumberRegexMatches
+}
+
+func gearMatches(line string) [][]int {
+	gearRegex := `\*`
+	gearR, _ := regexp.Compile(gearRegex)
+	matches := gearR.FindAllStringIndex(line, -1)
+	return matches
 }
 
 func isValidPartNumber(match []int, lineIndex int, data []string) bool {
