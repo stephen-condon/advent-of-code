@@ -11,32 +11,66 @@ import (
 )
 
 func main() {
-	result := solve("input.txt", true)
+	result := solve("input.txt", false)
 
 	log.Printf(`Result: %v`, result)
 }
 
 func solve(filename string, isPartOne bool) int {
+	var result int
 	data := readInput(filename)
 	sum := 0
+	cards := initCards(len(data))
 
-	for _, line := range data {
+	for lineIndex, line := range data {
 		_, last, _ := strings.Cut(line, ":")
 		winners, ours, _ := strings.Cut(last, " | ")
 		winningStrings := strings.Split(trimString(winners), " ")
 		ourStrings := strings.Split(trimString(ours), " ")
 		winningNumbers := convertStringArrayToInts((winningStrings))
 		ourNumbers := convertStringArrayToInts((ourStrings))
-		// log.Println(winningNumbers)
-		// log.Println(ourNumbers)
 		matches := countMatches(winningNumbers, ourNumbers)
-		// log.Println(matches)
+
 		if isPartOne {
 			sum = sum + calculateScore(matches)
+		} else {
+			currentCards := cards[lineIndex]
+			for i := lineIndex + 1; i < (matches + lineIndex + 1); i = i + 1 {
+				if i < len(cards) {
+					cards[i] = cards[i] + currentCards
+				} else {
+					break
+					// if we're trying to add beyond last card, we can kill the loop
+				}
+			}
 		}
 	}
 
+	if isPartOne {
+		result = sum
+	} else {
+		result = sumCards(cards)
+	}
+
+	return result
+}
+
+func sumCards(cards []int) int {
+	sum := 0
+	for _, numCards := range cards {
+		sum = sum + numCards
+	}
+
 	return sum
+}
+
+func initCards(numCardTypes int) []int {
+	cards := []int{}
+	for i := 0; i < numCardTypes; i = i + 1 {
+		cards = append(cards, 1)
+	}
+
+	return cards
 }
 
 func calculateScore(count int) int {

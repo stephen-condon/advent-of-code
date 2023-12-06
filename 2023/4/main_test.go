@@ -25,6 +25,25 @@ func Test_PartOne(t *testing.T) {
 	}
 }
 
+func Test_PartTwo(t *testing.T) {
+	type test struct {
+		filename string
+		want     int
+	}
+
+	tests := []test{
+		{filename: "sample.txt", want: 30},
+		{filename: "input.txt", want: 6284877},
+	}
+
+	for _, tc := range tests {
+		got := solve(tc.filename, false)
+		if got != tc.want {
+			t.Fatalf("expected: %v, got: %v", tc.want, got)
+		}
+	}
+}
+
 func Test_CalculateScore(t *testing.T) {
 	type test struct {
 		count int
