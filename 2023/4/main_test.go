@@ -18,7 +18,7 @@ func Test_PartOne(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		got := solvePartOne(tc.filename)
+		got := solve(tc.filename, true)
 		if got != tc.want {
 			t.Fatalf("expected: %v, got: %v", tc.want, got)
 		}

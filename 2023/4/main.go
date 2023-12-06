@@ -11,12 +11,12 @@ import (
 )
 
 func main() {
-	result := solvePartOne("input.txt")
+	result := solve("input.txt", true)
 
 	log.Printf(`Result: %v`, result)
 }
 
-func solvePartOne(filename string) int {
+func solve(filename string, isPartOne bool) int {
 	data := readInput(filename)
 	sum := 0
 
@@ -31,7 +31,9 @@ func solvePartOne(filename string) int {
 		// log.Println(ourNumbers)
 		matches := countMatches(winningNumbers, ourNumbers)
 		// log.Println(matches)
-		sum = sum + calculateScore(matches)
+		if isPartOne {
+			sum = sum + calculateScore(matches)
+		}
 	}
 
 	return sum
