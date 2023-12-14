@@ -10,17 +10,17 @@ import (
 )
 
 func main() {
-	result1, _ := solve("input.txt")
+	result2 := solve("input.txt")
 
-	log.Printf(`Result 1: %v`, result1)
+	log.Printf(`Result 2: %v`, result2)
 }
 
-func solve(filename string) (int, int) {
+func solve(filename string) int {
 	data := readInput(filename)
 
-	result1 := processGame(data)
+	result2 := processGame(data)
 
-	return result1, -1
+	return result2
 }
 
 func processGame(data []string) int {
@@ -66,21 +66,43 @@ func buildHandCounts(hand string) HandCounts {
 
 func evaluateTricks(handCounts HandCounts) int {
 	hasCount := []bool{false, false, false, false, false} // 5, 4, 3, 2, 2nd 2
-	for _, count := range handCounts {
-		if count == 5 {
-			hasCount[0] = true
-		} else if count == 4 {
-			hasCount[1] = true
-		} else if count == 3 {
-			hasCount[2] = true
-		} else if count == 2 {
-			if hasCount[3] {
-				hasCount[4] = true
-			} else {
-				hasCount[3] = true
+	secondKey := ""
+	largestCount := 0
+	log.Println(handCounts)
+	for key, count := range handCounts {
+		log.Printf(`key: %v; count: %v`, key, count)
+		if key != "J" {
+			if count > largestCount {
+				if count == 3 && largestCount == 2 {
+					secondKey = " "
+				}
+				largestCount = count
+			} else if count == 2 && largestCount == 3 {
+				secondKey = " "
+			} else if count == largestCount && count == 2 {
+				secondKey = key
 			}
 		}
 	}
+	log.Println(secondKey)
+	newCount := largestCount + handCounts["J"]
+	if newCount == 5 {
+		hasCount[0] = true
+	} else if newCount == 4 {
+		hasCount[1] = true
+	} else if newCount == 3 {
+		hasCount[2] = true
+		if secondKey != "" {
+			hasCount[3] = true
+		}
+	} else if newCount == 2 {
+		if secondKey != "" {
+			hasCount[4] = true
+		} else {
+			hasCount[3] = true
+		}
+	}
+	log.Println(hasCount)
 
 	return assignRankValue(hasCount)
 }
@@ -99,11 +121,9 @@ func assignRankValue(hasCount []bool) int {
 			rank = 30
 		}
 	} else if hasCount[3] {
-		if hasCount[4] {
-			rank = 22
-		} else {
-			rank = 20
-		}
+		rank = 20
+	} else if hasCount[4] {
+		rank = 22
 	}
 
 	return rank
@@ -142,6 +162,7 @@ func (g GameHands) sort() {
 func (g GameHands) calculateGameScore() int {
 	total := 0
 	for index, hand := range g {
+		log.Println(hand)
 		handScore := (index + 1) * hand.bid
 		total = total + handScore
 	}
@@ -182,5 +203,5 @@ func compareCards(a string, b string) int {
 }
 
 func getCardOrder() []string {
-	return []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
+	return []string{"A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"}
 }
