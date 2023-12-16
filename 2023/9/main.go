@@ -9,25 +9,53 @@ import (
 )
 
 func main() {
-	result1 := solve("input.txt")
+	result1, result2 := solve("input.txt")
 
 	log.Printf(`Result 1: %v`, result1)
+	log.Printf(`Result 2: %v`, result2)
 }
 
-func solve(filename string) int {
+func solve(filename string) (int, int) {
 	data := readInput(filename)
 	sum := 0
+	sumPrev := 0
 
 	for _, line := range data {
 		sensorData := parseLine(line)
 		log.Println(sensorData)
 		extrapolation := extrapolate(sensorData)
+		downExtrapolation := extrapolateDown(sensorData)
 
-		log.Printf(`next value by extrapolation: %v`, extrapolation)
+		log.Printf(`next value ßby extrapolation: %v`, extrapolation)
+		log.Printf(`prev value by extrapolation: %v`, downExtrapolation)
 		sum = sum + extrapolation
+		sumPrev = sumPrev + downExtrapolation
 	}
 
-	return sum
+	return sum, sumPrev
+}
+
+func extrapolateDown(data []int) int {
+	var diff []int
+	// build next diff array
+	// calc diff between elements
+	// if constant, extrapolate back
+	// otherwise, call extrapolate recursively
+	for i := 0; i < (len(data) - 1); i = i + 1 {
+		diffVal := data[i+1] - data[i]
+		diff = append(diff, diffVal)
+	}
+
+	isConstant, prevDiff := isConstantArray(diff)
+
+	if !isConstant {
+		prevDiff = extrapolateDown(diff)
+	}
+
+	nextValue := data[0] - prevDiff
+
+	return nextValue
+
 }
 
 func extrapolate(data []int) int {
