@@ -19,3 +19,21 @@ func TestSolutionInput(t *testing.T) {
 	}
 
 }
+
+func TestSolution2Example(t *testing.T) {
+	result := solution2("./example.txt")
+
+	if result != 31 {
+		t.Fatalf(`Expected 31, received %v`, result)
+	}
+
+}
+
+func TestSolution2Input(t *testing.T) {
+	result := solution2("./input.txt")
+
+	if result != 22014209 {
+		t.Fatalf(`Expected 22014209, received %v`, result)
+	}
+
+}
