@@ -1,0 +1,7 @@
+mul 2 4
+dont
+skip mul 5 5
+skip mul 11 8
+donmul 8 5
+
+48
