@@ -1,7 +1,6 @@
 package solution4
 
 import (
-	"fmt"
 	"scondon87/advent-ofcode/2024/readinput"
 	"strings"
 )
@@ -19,7 +18,6 @@ func solution(filename string) int {
 	for i := range input {
 		split := strings.Split(input[i], "")
 		data[i] = split
-		fmt.Println(split)
 	}
 
 	// loop through by row
@@ -27,14 +25,42 @@ func solution(filename string) int {
 		xIndices := searchTerm.findX(data[i])
 
 		for _, x := range xIndices {
-			fmt.Println("precheck", i, x)
 			found := searchTerm.findWord(x, i, data)
-			fmt.Println("found", i, x, found)
 			count += found
 		}
 	}
 
 	return count
+}
+
+func solution2(filename string) int {
+	count := 0
+	input := readinput.Read(filename)
+	var data [][]string = make([][]string, len(input))
+
+	searchTerm := wordFind{"M", "A", "S"}
+
+	// populate data as [][]string
+	for i := range input {
+		split := strings.Split(input[i], "")
+		data[i] = split
+	}
+
+	// find "A", which is the center, then need to check diagonals, opposites need to be M/S
+	// loop through by row
+	for i := range data {
+		if i != 0 && i != len(data)-1 {
+			aIndices := searchTerm.findA(data[i], len(data[i]))
+
+			for _, x := range aIndices {
+				found := searchTerm.findPattern(x, i, data)
+				count += found
+			}
+		}
+	}
+
+	return count
+
 }
 
 func (wf wordFind) findX(input []string) []int {
@@ -52,43 +78,65 @@ func (wf wordFind) findWord(x int, y int, data [][]string) int {
 	count := 0
 	if y >= 3 && data[y-1][x] == wf[1] && data[y-2][x] == wf[2] && data[y-3][x] == wf[3] {
 		// check up
-		fmt.Println("up", y, x)
 		count++
 	}
 	if y < len(data)-3 && data[y+1][x] == wf[1] && data[y+2][x] == wf[2] && data[y+3][x] == wf[3] {
 		// check down
-		fmt.Println("down", y, x)
 		count++
 	}
 	if x >= 3 && data[y][x-1] == wf[1] && data[y][x-2] == wf[2] && data[y][x-3] == wf[3] {
 		// check left
-		fmt.Println("left", y, x)
 		count++
 	}
 	if x < len(data[0])-3 && data[y][x+1] == wf[1] && data[y][x+2] == wf[2] && data[y][x+3] == wf[3] {
 		// check right
-		fmt.Println("right", y, x)
 		count++
 	}
 	if y >= 3 && x < len(data[0])-3 && data[y-1][x+1] == wf[1] && data[y-2][x+2] == wf[2] && data[y-3][x+3] == wf[3] {
 		// check up right
-		fmt.Println("up-right", y, x)
 		count++
 	}
 	if y >= 3 && x >= 3 && data[y-1][x-1] == wf[1] && data[y-2][x-2] == wf[2] && data[y-3][x-3] == wf[3] {
 		// check up left
-		fmt.Println("up-left", y, x)
 		count++
 	}
 	if y < len(data)-3 && x < len(data[0])-3 && data[y+1][x+1] == wf[1] && data[y+2][x+2] == wf[2] && data[y+3][x+3] == wf[3] {
 		// check down right
-		fmt.Println("down-right", y, x)
 		count++
 	}
 	if y < len(data)-3 && x >= 3 && data[y+1][x-1] == wf[1] && data[y+2][x-2] == wf[2] && data[y+3][x-3] == wf[3] {
 		// check down left
-		fmt.Println("down-left", y, x)
 		count++
+	}
+
+	return count
+}
+
+func (wf wordFind) findA(input []string, length int) []int {
+	result := []int{}
+	for i := range input {
+		if input[i] == wf[1] && i != 0 && i != length-1 {
+			result = append(result, i)
+		}
+	}
+
+	return result
+}
+
+func (wf wordFind) findPattern(x int, y int, data [][]string) int {
+	count := 0
+	if data[y-1][x-1] == "M" && data[y+1][x+1] == "S" {
+		if data[y-1][x+1] == "M" && data[y+1][x-1] == "S" {
+			count++
+		} else if data[y-1][x+1] == "S" && data[y+1][x-1] == "M" {
+			count++
+		}
+	} else if data[y-1][x-1] == "S" && data[y+1][x+1] == "M" {
+		if data[y-1][x+1] == "M" && data[y+1][x-1] == "S" {
+			count++
+		} else if data[y-1][x+1] == "S" && data[y+1][x-1] == "M" {
+			count++
+		}
 	}
 
 	return count
