@@ -19,3 +19,21 @@ func TestSolutionInput(t *testing.T) {
 	}
 
 }
+
+func TestSolution2Example(t *testing.T) {
+	result := solution2("./example.txt")
+
+	if result != 11387 {
+		t.Fatalf(`Expected 11387, received %v`, result)
+	}
+
+}
+
+func TestSolution2Input(t *testing.T) {
+	result := solution2("./input.txt")
+
+	if result != 96779702119491 {
+		t.Fatalf(`Expected 96779702119491, received %v`, result)
+	}
+
+}
