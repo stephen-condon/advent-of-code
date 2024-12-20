@@ -12,12 +12,7 @@ type equation struct {
 	components []int
 }
 
-// evalPermutations takes a list of operators and evaluates all permutations of the equation
 func (e *equation) evalPermutations(operators []string) int {
-	// generate all permutations of the equation by changing oeprators
-	// if any permutation equals the answer, return the answer
-	// if no permutation equals the answer, return 0
-	// Initialize result variable
 	result := 0
 
 	// Get all possible combinations of operators for equation size
@@ -56,12 +51,7 @@ func (e *equation) evalPermutations(operators []string) int {
 	return result
 }
 
-// evalPermutations takes a list of operators and evaluates all permutations of the equation
 func (e *equation) evalPermutations2(operators []string) int {
-	// generate all permutations of the equation by changing oeprators
-	// if any permutation equals the answer, return the answer
-	// if no permutation equals the answer, return 0
-	// Initialize result variable
 	result := 0
 
 	// Get all possible combinations of operators for equation size
